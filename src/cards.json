@@ -1,0 +1,7 @@
+{
+    "asesina": "Paga 3 monedas y asesina a un oponente.",
+    "embajador": "Toma una carta del mazo y devuelve otra. Bloquea robos.",
+    "capitan": "Roba 2 monedas a un oponente. Bloquea robos.",
+    "condesa": "Bloquea asesinato.",
+    "duque": "Toma 3 monedas del tesoro. Bloquea embajador."
+}
