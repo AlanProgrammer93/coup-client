@@ -58,3 +58,7 @@ export const emitJoinGame = (username, idGame) => {
 export const emitStartGame = (idGame) => {
     socket.emit('startGame', { idGame });
 }
+
+export const emitTakeMoney = (idGame, username) => {
+    socket.emit('takeMoney', { idGame, username });
+}

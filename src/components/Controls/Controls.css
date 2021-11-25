@@ -37,7 +37,6 @@
     margin-left: 10px;
     background-color: white;
     border-radius: 5px;
-    cursor: pointer;
 }
 .home__controls-card:hover {
     transform: scale(1.1);
@@ -69,11 +68,35 @@
     color: white;
     border-radius: 15px;
     margin-right: 20px;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     cursor: pointer;
 }
 .home__controls-bottons button:hover {
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 
+.optionGame {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    bottom: 15px;
+    position: fixed;
+    border: 1px solid deepskyblue;
+    background-color: deepskyblue;
+    padding: 18px;
+    border-radius: 15px;
+}
+.optionGame button {
+    border: 1px solid white;
+    border-radius: 15px;
+    margin-right: 10px;
+    background-color: white;
+    cursor: pointer;
+    padding: 10px;
+    color: deepskyblue;
+    font-weight: bold;
+}
+.optionGame button:hover {
+    transform: scale(1.1);
+}
 
