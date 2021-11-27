@@ -11,16 +11,9 @@ const Main = () => {
             <div className="home__main">
                 <div className="home__main-oponent1">
                     {
-                        game && game.gamer[0] && (
-                            <>
-                                <div className="home__main-oponent-card">
-
-                                </div>
-                                <div className="home__main-oponent-card">
-
-                                </div>
-                            </>
-                        )
+                        game && game.gamer[0].cards.map(card => (
+                            <div className="home__main-oponent-card"></div>
+                        ))
                     }
 
                 </div>

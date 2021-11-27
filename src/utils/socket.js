@@ -13,7 +13,6 @@ export const init = (setGames, dispatch) => {
     });  */
 
     socket.on('gameCreated', (data) => {
-        console.log("juego creado ", data);
         setGames(data)
     });
 
@@ -35,12 +34,83 @@ export const init = (setGames, dispatch) => {
         });
     });
 
-    // Listening Event
-    /* socket.on("inform_others_about_me", function (data) {
-       
-       setNewConnection(data.connectionId, SDP_function);
-       setUsers(values => [...values, data])
-   }); */
+    socket.on('attacked', (data) => {
+        switch (data.card) {
+            case 'capitan':
+                console.log("ATACADO POR CAPITAN DE ", data.attackedBy);
+                dispatch({
+                    type: 'SET_ATTACKER',
+                    payload: data
+                });
+                break;
+
+            case 'asesina':
+                console.log("ATACADO POR ASESINA DE ", data.attackedBy);
+                dispatch({
+                    type: 'SET_ATTACKER',
+                    payload: data
+                });
+                break;
+        
+            case 'embajador':
+                console.log("ATACADO POR EMBAJADOR DE ", data.attackedBy);
+                break;
+
+            default:
+                break;
+        }
+    });
+
+    socket.on('blocked', (data) => {
+        switch (data.card) {
+            case 'capitan':
+                console.log("BLOQUEADO POR CAPITAN DE ", data.blockedBy);
+                dispatch({
+                    type: 'SET_BLOCKER',
+                    payload: data
+                });
+                break;
+        
+            case 'embajador':
+                console.log("BLOQUEADO POR EMBAJADOR DE ", data.blockedBy);
+                break;
+
+            case 'condesa':
+                console.log("BLOQUEADO POR CONDESA DE ", data.blockedBy);
+                dispatch({
+                    type: 'SET_BLOCKER',
+                    payload: data
+                });
+                break;
+
+            default:
+                break;
+        }
+    });
+
+    socket.on('lostCard', () => {
+        dispatch({
+            type: 'LOST_CARD',
+            payload: {
+                variable: 'lostCard'
+            }
+        });
+    });
+
+    socket.on('lostGame', (data) => {
+        dispatch({
+            type: 'RESULT',
+            payload: 'lost'
+        });
+    });
+
+    socket.on('win', (data) => {
+        dispatch({
+            type: 'RESULT',
+            payload: 'win'
+        });
+    });
+    
 }
 
 export const emitOpenGame = (username, idGame) => {
@@ -59,6 +129,34 @@ export const emitStartGame = (idGame) => {
     socket.emit('startGame', { idGame });
 }
 
+// FUNTIONS GAME
 export const emitTakeMoney = (idGame, username) => {
     socket.emit('takeMoney', { idGame, username });
+}
+
+export const emitUseCard = (card, idGame, username, attacker) => {
+    socket.emit('useCard', { card, idGame, username, attacker});
+}
+
+export const emitBlockCard = (card, idGame, attacker, blocker) => {
+    socket.emit('blockCard', { card, idGame, attacker, blocker});
+}
+
+
+export const emitAllow = (idGame, attacked, attackedBy, card) => {
+    socket.emit('allow', { idGame, attacked, attackedBy, card});
+}
+export const emitAllowBlock = (idGame, attacked, attackedBy, card) => {
+    socket.emit('allowBlock', { idGame, attacked, attackedBy, card});
+}
+export const emitLostCard = (idGame, loser) => {
+    socket.emit('lostCard', { idGame, loser});
+}
+export const emitLostCardSelected = (idGame, loser, card) => {
+    socket.emit('lostCardSelected', { idGame, loser, card});
+}
+
+
+export const emitLostGame = (idGame, loser) => {
+    socket.emit('endGame', { idGame, loser });
 }

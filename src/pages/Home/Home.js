@@ -4,7 +4,12 @@ import { useParams } from 'react-router-dom';
 
 import Controls from '../../components/Controls/Controls'
 import Main from '../../components/Main/Main'
+import MessageAttacked from '../../components/MessageAttacked/MessageAttacked';
+import MessageBlocked from '../../components/MessageBlocked/MessageBlocked';
 import MessageGame from '../../components/MessageGame/MessageGame';
+import MessageLost from '../../components/MessageLost/MessageLost';
+import MessageLostCard from '../../components/MessageLostCard/MessageLostCard';
+import MessageWin from '../../components/MessageWin/MessageWin';
 import Starting from '../../components/Starting/Starting';
 import { emitGetGame } from '../../utils/socket';
 
@@ -14,7 +19,7 @@ const Home = () => {
     const param = useParams();
     const idGame = param.idGame;
 
-    const { user, game } = useSelector((state) => ({ ...state }));
+    const { user, game, attacker, blocker, variables, result } = useSelector((state) => ({ ...state }));
 
     useEffect(() => {
         emitGetGame(idGame, user.username);
@@ -22,12 +27,28 @@ const Home = () => {
 
     return (
         <div className="home">
+            {console.log(attacker)}
             {
                 game && game.state === 'initial' ? '' : game?.turn === user.username ? (
                     <MessageGame msg="Tu Turno" />
                 ) : (
                     <MessageGame msg={`Turno de ${game && game?.turn}`} />
                 )
+            }
+            {
+                attacker && (<MessageAttacked />)
+            }
+            {
+                blocker && (<MessageBlocked />)
+            }
+            {
+                variables && (<MessageLostCard />)
+            }
+            {
+                result && result === 'lost' && (<MessageLost />)
+            }
+            {
+                result && result === 'win' && (<MessageWin />)
             }
             <Main />
             {console.log(game)}
