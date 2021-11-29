@@ -35,30 +35,17 @@ export const init = (setGames, dispatch) => {
     });
 
     socket.on('attacked', (data) => {
-        switch (data.card) {
-            case 'capitan':
-                console.log("ATACADO POR CAPITAN DE ", data.attackedBy);
-                dispatch({
-                    type: 'SET_ATTACKER',
-                    payload: data
-                });
-                break;
+        dispatch({
+            type: 'SET_ATTACKER',
+            payload: data
+        });
+    });
 
-            case 'asesina':
-                console.log("ATACADO POR ASESINA DE ", data.attackedBy);
-                dispatch({
-                    type: 'SET_ATTACKER',
-                    payload: data
-                });
-                break;
-        
-            case 'embajador':
-                console.log("ATACADO POR EMBAJADOR DE ", data.attackedBy);
-                break;
-
-            default:
-                break;
-        }
+    socket.on('attackedGlobal', (data) => {
+        dispatch({
+            type: 'SET_ATTACKER_GLOBAL',
+            payload: data
+        });
     });
 
     socket.on('blocked', (data) => {
@@ -83,6 +70,14 @@ export const init = (setGames, dispatch) => {
                 });
                 break;
 
+            case 'duque':
+                console.log("BLOQUEADO POR DUQUE DE ", data.blockedBy);
+                dispatch({
+                    type: 'SET_BLOCKER',
+                    payload: data
+                });
+                break;
+
             default:
                 break;
         }
@@ -94,6 +89,13 @@ export const init = (setGames, dispatch) => {
             payload: {
                 variable: 'lostCard'
             }
+        });
+    });
+
+    socket.on('descartOneCard', (data) => {
+        dispatch({
+            type: 'DESCART_CARD',
+            payload: data
         });
     });
 
@@ -137,15 +139,22 @@ export const emitTakeMoney = (idGame, username) => {
 export const emitUseCard = (card, idGame, username, attacker) => {
     socket.emit('useCard', { card, idGame, username, attacker});
 }
+// Embajador y Duque
+export const emitUseCardGlobal = (card, idGame, attacker) => {
+    socket.emit('useCardGlobal', { card, idGame, attacker});
+}
+export const emitReturnCardAmbassador = (data) => {
+    socket.emit('useReturnCardAmbassador',  data );
+}
+
 
 export const emitBlockCard = (card, idGame, attacker, blocker) => {
     socket.emit('blockCard', { card, idGame, attacker, blocker});
 }
-
-
 export const emitAllow = (idGame, attacked, attackedBy, card) => {
     socket.emit('allow', { idGame, attacked, attackedBy, card});
 }
+
 export const emitAllowBlock = (idGame, attacked, attackedBy, card) => {
     socket.emit('allowBlock', { idGame, attacked, attackedBy, card});
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 import data from '../../cards.json';
-import { emitAllow, emitBlockCard, emitTakeMoney, emitUseCard } from '../../utils/socket';
+import { emitAllow, emitBlockCard, emitLostCard, emitLostGame, emitTakeMoney, emitUseCard, emitUseCardGlobal } from '../../utils/socket';
 import Message from '../MessageFeedback/Message';
 import SelectOponent from '../SelectOponent/SelectOponent';
 
@@ -29,18 +29,11 @@ const Controls = () => {
         if (game.gamer.length === 1) {
             switch (card) {
                 case 'capitan':
-                    console.log("CAPITAN");
                     emitUseCard('capitan', game.idGame, game.gamer[0].user, user.username)
                     break;
             
-                case 'embajador':
-                    console.log("EMBAJADOR");
-                    break;
-
                 case 'asesina':
                     if(game.myUser.money.length > 2){
-                        console.log("ASESINA");
-
                         emitUseCard('asesina', game.idGame, game.gamer[0].user, user.username)
                         return
                     }
@@ -53,6 +46,21 @@ const Controls = () => {
         } else {
             setCardSelected(card)
             setSelectOponent(true)
+        }
+    }
+
+    const playCardGlobal = (card) => {
+        switch (card) {
+            case 'embajador':
+                emitUseCardGlobal('embajador', game.idGame, user.username)
+                break;
+
+            case 'duque':
+                emitUseCardGlobal('duque', game.idGame, user.username)
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -109,6 +117,44 @@ const Controls = () => {
         });
     }
 
+    const distrust = () => {
+        var userAttacker = game.gamer.filter(
+            (u) => u.user == attacker.attackedBy
+        );
+        var cardExist = userAttacker[0].cards.filter(
+            (c) => c == attacker.card
+        );
+        
+        if(!cardExist[0]) {
+            if(attacker.card === 'asesina') {
+                console.log("NO TIENE LA asesina Y PIERDE EL JUEGO");
+                emitLostGame(game.idGame, attacker.attackedBy)
+                dispatch({
+                    type: 'SET_ATTACKER',
+                    payload: null
+                });
+                return
+            }
+            emitLostCard(game.idGame, attacker.attackedBy)
+            dispatch({
+                type: 'SET_ATTACKER',
+                payload: null
+            });
+        } else {
+            //emitLostCard(game.idGame, user.username)
+            dispatch({
+                type: 'SET_ATTACKER',
+                payload: null
+            });
+            dispatch({
+                type: 'LOST_CARD',
+                payload: {
+                    variable: 'lostCard'
+                }
+            });
+        }
+    }
+
     return (
         <>
             {selectOponent && <SelectOponent gamers={game.gamer} />}
@@ -130,7 +176,6 @@ const Controls = () => {
                                     <p>{card}</p>
                                     <span>{data[card]}</span>
                                 </div>
-
                             </div>
                         ))
                     }
@@ -146,8 +191,8 @@ const Controls = () => {
                     ? game.turn === user.username ? (
                             <div className="optionGame">
                                 <button onClick={() => playCard('capitan')}>Tengo el Capitan</button>
-                                <button onClick={() => playCard('embajador')}>Tengo el Embajador</button>
-                                <button onClick={() => playCard('duque')}>Tengo el Duque</button>
+                                <button onClick={() => playCardGlobal('embajador')}>Tengo el Embajador</button>
+                                <button onClick={() => playCardGlobal('duque')}>Tengo el Duque</button>
                                 <button onClick={() => playCard('asesina')}>Tengo la Asesina</button>
                                 <button>COUP</button>
                             </div>
@@ -160,7 +205,7 @@ const Controls = () => {
                                                 <>
                                                 <button onClick={() => blockCard('capitan')}>Tengo el Capitan</button>
                                                 <button onClick={() => blockCard('embajador')}>Tengo el Embajador</button>
-                                                <button>Desconfio</button>
+                                                <button onClick={distrust}>Desconfio</button>
                                                 <button onClick={allow}>Permitir</button>
                                                 </>
                                             ) 
@@ -168,22 +213,22 @@ const Controls = () => {
                                                 ? (
                                                     <>
                                                     <button onClick={() => blockCard('condesa')}>Tengo la Condesa</button>
-                                                    <button>Desconfio</button>
+                                                    <button onClick={distrust}>Desconfio</button>
                                                     <button onClick={allow}>Permitir</button>
                                                     </>
                                                 )
                                                 : attacker.card === 'duque' 
                                                     ? (
                                                         <>
-                                                        <button>Desconfio</button>
-                                                        <button>Permitir</button>
+                                                        <button onClick={distrust}>Desconfio</button>
+                                                        <button onClick={allow}>Permitir</button>
                                                         </>
                                                     )
                                                     :  attacker.card === 'embajador' && (
                                                         <>
-                                                        <button>Tengo el Duque</button>
-                                                        <button>Desconfio</button>
-                                                        <button>Permitir</button>
+                                                        <button >Tengo el Duque</button>
+                                                        <button onClick={distrust}>Desconfio</button>
+                                                        <button onClick={allow}>Permitir</button>
                                                         </>
                                                     )
 

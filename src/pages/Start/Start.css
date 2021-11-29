@@ -27,7 +27,7 @@
     border-radius: 15px;
     
 }
-.start__list .container{
+.start__list .container-games{
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -64,7 +64,7 @@ const Start = () => {
             <div className="start__list">
                 {
                     myGame ? (
-                        <div key={myGame} className="container" style={{ borderBottom: '1px solid #2b2b2b' }}>
+                        <div key={myGame} className="container-games" style={{ borderBottom: '1px solid #2b2b2b' }}>
                             <div className="container__info">
                                 <h2>{myGame}</h2>
                                 {games && games.filter(game => game.idGame == myGame).map(g => <p>{g.gamer.length}</p>)}
@@ -81,7 +81,7 @@ const Start = () => {
 
                 {
                     games && games.filter(game => game.idGame != myGame).map((game, index) => (
-                        <div className="container" key={index}>
+                        <div className="container-games" key={index}>
                             <div className="container__info">
                                 <h2>{game.idGame}</h2>
                                 <p>({game.gamer.length})</p>
