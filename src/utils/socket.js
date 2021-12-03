@@ -2,28 +2,26 @@ import socketClient from 'socket.io-client';
 
 let socket;
 
-const SERVER = 'http://localhost:5000';
+const SERVER = 'http://192.168.50.115:5000';
 
-export const init = (setGames, dispatch) => {
+export const init = (dispatch) => {
     socket = socketClient(SERVER);
 
-    /* socket.emit('mostrarID'); 
-    socket.on('mostrando', (data) => {
-        console.log(data);
-    });  */
-
     socket.on('gameCreated', (data) => {
-        setGames(data)
+        dispatch({
+            type: 'GET_GAMES',
+            payload: data
+        });
     });
 
     // emitGetGame
     socket.on('getGame', (data) => {
         let dataGame = data;
-        const myUser = data.gamer.filter(
-            (g) => g.connectionId == socket.id
+        const myUser = data?.gamer.filter(
+            (g) => g.connectionId === socket.id
         );
-        const otherUsers = data.gamer.filter(
-            (g) => g.connectionId != socket.id
+        const otherUsers = data?.gamer.filter(
+            (g) => g.connectionId !== socket.id
         );
         dataGame.gamer = otherUsers
         dataGame.myUser = myUser[0]
@@ -32,11 +30,22 @@ export const init = (setGames, dispatch) => {
             type: 'GET_GAME',
             payload: dataGame
         });
+        dispatch({
+            type: 'SET_ACTION',
+            payload: null
+        });
     });
 
     socket.on('attacked', (data) => {
         dispatch({
             type: 'SET_ATTACKER',
+            payload: data
+        });
+    });
+    socket.on('coup', (data) => {
+        console.log("COUP", data);
+        dispatch({
+            type: 'SET_COUP',
             payload: data
         });
     });
@@ -49,38 +58,14 @@ export const init = (setGames, dispatch) => {
     });
 
     socket.on('blocked', (data) => {
-        switch (data.card) {
-            case 'capitan':
-                console.log("BLOQUEADO POR CAPITAN DE ", data.blockedBy);
-                dispatch({
-                    type: 'SET_BLOCKER',
-                    payload: data
-                });
-                break;
-        
-            case 'embajador':
-                console.log("BLOQUEADO POR EMBAJADOR DE ", data.blockedBy);
-                break;
-
-            case 'condesa':
-                console.log("BLOQUEADO POR CONDESA DE ", data.blockedBy);
-                dispatch({
-                    type: 'SET_BLOCKER',
-                    payload: data
-                });
-                break;
-
-            case 'duque':
-                console.log("BLOQUEADO POR DUQUE DE ", data.blockedBy);
-                dispatch({
-                    type: 'SET_BLOCKER',
-                    payload: data
-                });
-                break;
-
-            default:
-                break;
-        }
+        dispatch({
+            type: 'SET_BLOCKER',
+            payload: data
+        });
+        dispatch({
+            type: 'SET_ACTION',
+            payload: null
+        });
     });
 
     socket.on('lostCard', () => {
@@ -112,11 +97,28 @@ export const init = (setGames, dispatch) => {
             payload: 'win'
         });
     });
+
+    socket.on('actionOtherUser', (data) => {
+        dispatch({
+            type: 'SET_ACTION',
+            payload: {
+                msg: data
+            }
+        });
+    });
     
 }
 
 export const emitOpenGame = (username, idGame) => {
     socket.emit('createGame', { username, idGame });
+}
+
+export const emitDeleteGame = (username, idGame) => {
+    socket.emit('deleteGame', { username, idGame });
+}
+
+export const emitGetGames = () => {
+    socket.emit('getGames');
 }
 
 export const emitGetGame = (idGame, username) => {
@@ -165,7 +167,13 @@ export const emitLostCardSelected = (idGame, loser, card) => {
     socket.emit('lostCardSelected', { idGame, loser, card});
 }
 
-
 export const emitLostGame = (idGame, loser) => {
     socket.emit('endGame', { idGame, loser });
+}
+export const emitBlockAttackGlobal = (idGame) => {
+    socket.emit('blockCardAttackGlobal', { idGame });
+}
+
+export const getSocket = () => {
+    return socket.id
 }

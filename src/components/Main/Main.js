@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux';
 
 import './Main.css'
 
 const Main = () => {
-    const { user, game } = useSelector((state) => ({ ...state }));
+    const { game } = useSelector((state) => ({ ...state }));
     
     return (
         <>
             <div className="home__main">
                 <div className="home__main-oponent1">
                     {
-                        game && game.gamer[0].cards.map(card => (
-                            <div className="home__main-oponent-card"></div>
+                        game && game.gamer[0] && game.gamer[0].cards.map((card, index) => (
+                            <div key={index} className="home__main-oponent-card"></div>
                         ))
                     }
 
@@ -30,16 +30,9 @@ const Main = () => {
 
                 <div className="home__main-oponent2">
                     {
-                        game && game.gamer[1] && (
-                            <>
-                                <div className="home__main-oponent-card">
-
-                                </div>
-                                <div className="home__main-oponent-card">
-
-                                </div>
-                            </>
-                        )
+                        game && game.gamer[1] && game.gamer[1].cards.map((card, index) => (
+                            <div key={index} className="home__main-oponent-card"></div>
+                        ))
                     }
                 </div>
 
@@ -68,7 +61,7 @@ const Main = () => {
                         <div className="Details-oponent2">
                             <h2>{game.gamer[1].user}</h2>
                             <div className="money-aponent2">
-                            {
+                                {
                                     game.gamer[1].money.map(mon => (
                                         <div className="money"></div>
                                     ))

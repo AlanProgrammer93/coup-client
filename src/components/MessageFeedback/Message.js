@@ -6,6 +6,7 @@ const Message = ({msg, setError}) => {
         setTimeout(() => 
             setError('')
         , 3000)
+        // eslint-disable-next-line
     }, []) 
 
     return (

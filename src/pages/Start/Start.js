@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-import { emitJoinGame, emitOpenGame, init } from '../../utils/socket'
+import { emitDeleteGame, emitGetGames, emitJoinGame, emitOpenGame, init } from '../../utils/socket'
 
 import './Start.css'
 
@@ -10,19 +10,20 @@ const Start = () => {
     const history = useNavigate()
 
     const [myGame, setMyGame] = useState('')
-    const [games, setGames] = useState([]);
 
-    const { user } = useSelector((state) => ({ ...state }));
+    const { user, games } = useSelector((state) => ({ ...state }));
 
     const dispatch = useDispatch()
 
     useEffect(() => {
-        init(setGames, dispatch);
+        init(dispatch);
+        emitGetGames()
         // obtener games
         const currentGame = localStorage.getItem('currentGame');
         if (currentGame) {
             setMyGame(currentGame);
         }
+        // eslint-disable-next-line
     }, [])
 
     const openGame = () => {
@@ -34,7 +35,7 @@ const Start = () => {
 
     const endGame = () => {
         localStorage.removeItem('currentGame')
-        // falta eliminar idGame del server
+        emitDeleteGame(user.username, myGame)
         setMyGame('');
     }
 
@@ -45,7 +46,6 @@ const Start = () => {
     const joinGame = (idGame) => {
         emitJoinGame(user.username, idGame);
         setMyGame(localStorage.setItem('currentGame', idGame));
-        // PROBAR SI ANDA PLAYING
         localStorage.setItem('state', 'playing')
         history(`/${idGame}`)
     }
@@ -60,14 +60,13 @@ const Start = () => {
             >
                 Abrir Partida
             </button>
-
+            {console.log(games)}
             <div className="start__list">
                 {
                     myGame ? (
                         <div key={myGame} className="container-games" style={{ borderBottom: '1px solid #2b2b2b' }}>
                             <div className="container__info">
-                                <h2>{myGame}</h2>
-                                {games && games.filter(game => game.idGame == myGame).map(g => <p>{g.gamer.length}</p>)}
+                                <h2>Tu Juego</h2>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <button onClick={() => startGame(myGame)} className="btn-start">Iniciar</button>
@@ -80,11 +79,10 @@ const Start = () => {
                 }
 
                 {
-                    games && games.filter(game => game.idGame != myGame).map((game, index) => (
+                    games && games.filter(game => game.idGame !== myGame).map((game, index) => (
                         <div className="container-games" key={index}>
                             <div className="container__info">
-                                <h2>{game.idGame}</h2>
-                                <p>({game.gamer.length})</p>
+                                <h2>{game.createdBy}</h2>
                             </div>
                             {
                                 !myGame ? (

@@ -1,11 +1,11 @@
-.message {
-    border: 1px solid red;
+.messageAction {
+    border: 1px solid green;
     border-radius: 15px;
-    padding: 15px;
+    padding: 20px;
     bottom: 30px;
     position: absolute;
-    width: 300px;
-    background-color: red;
+    width: 360px;
+    background-color: green;
     color: white;
     text-align: center;
     letter-spacing: 2px;

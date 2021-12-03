@@ -3,22 +3,24 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { emitLostCardSelected } from '../../utils/socket';
 
-import './MessageLostCard.css'
+import './MessageCoup.css'
 
-const MessageLostCard = () => {
-    const { user, game } = useSelector((state) => ({ ...state }));
+const MessageCoup = () => {
+    const { user, game, coup } = useSelector((state) => ({ ...state }));
     const dispatch = useDispatch()
 
     const deleteCard = (card) => {
+        // aqui ver si tiene una carta, si es asi emitir endGame
         emitLostCardSelected(game.idGame, user.username, card)
         dispatch({
-            type: 'LOST_CARD',
+            type: 'SET_COUP',
             payload: null
         });
     }
 
     return (
-        <div className="lostCard">
+        <div className="coup">
+            <h3>{`${coup.attackedBy} esta usando COUP`}</h3>
             <p>Elimina una carta</p>
             <div className="cards">
                 {
@@ -37,4 +39,4 @@ const MessageLostCard = () => {
     )
 }
 
-export default MessageLostCard
+export default MessageCoup

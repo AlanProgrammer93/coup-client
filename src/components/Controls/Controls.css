@@ -33,7 +33,7 @@
 .home__controls-card {
     width: 130px;
     height: 190px;
-    margin-top: -70px;
+    margin-top: -60px;
     margin-left: 10px;
     background-color: white;
     border-radius: 5px;
@@ -64,11 +64,11 @@
 .home__controls-bottons button {
     border: 1px solid deepskyblue;
     background-color: deepskyblue;
-    padding: 5px 20px;
+    padding: 2px 20px;
     color: white;
     border-radius: 15px;
     margin-right: 20px;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     cursor: pointer;
 }
 .home__controls-bottons button:hover {
@@ -83,7 +83,7 @@
     position: fixed;
     border: 1px solid deepskyblue;
     background-color: deepskyblue;
-    padding: 18px;
+    padding: 15px;
     border-radius: 15px;
 }
 .optionGame button {
@@ -92,7 +92,7 @@
     margin-right: 10px;
     background-color: white;
     cursor: pointer;
-    padding: 10px;
+    padding: 8px;
     color: deepskyblue;
     font-weight: bold;
 }

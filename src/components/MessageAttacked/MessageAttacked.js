@@ -6,10 +6,9 @@ import './MessageAttacked.css'
 const MessageAttacked = () => {
     const { attacker } = useSelector((state) => ({ ...state }));
     
-
     return (
         <div className="attacked">
-            {`${attacker.attackedBy} esta usando ${attacker.card}`}
+          {`${attacker.attackedBy} esta usando ${attacker.card}`}
         </div>
     )
 }

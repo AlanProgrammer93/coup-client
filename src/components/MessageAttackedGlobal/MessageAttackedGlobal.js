@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
-import { emitAllow, emitBlockCard, emitLostCard } from '../../utils/socket';
+import { emitAllow, emitBlockAttackGlobal, emitBlockCard, emitLostCard, emitLostGame } from '../../utils/socket';
 
 import './MessageAttackedGlobal.css'
 
 const MessageAttackedGlobal = () => {
     const { game, user, attackerGlobal } = useSelector((state) => ({ ...state }));
-    const [time, setTime] = useState(8)
+    const [time, setTime] = useState(6)
 
     const dispatch = useDispatch()
 
@@ -21,17 +21,28 @@ const MessageAttackedGlobal = () => {
             });
             emitAllow(game.idGame, user.username, attackerGlobal.attackedBy, attackerGlobal.card)
         }
+        // eslint-disable-next-line
     }, [time])
 
     const distrust = () => {
         var userAttacker = game.gamer.filter(
-            (u) => u.user == attackerGlobal.attackedBy
+            (u) => u.user === attackerGlobal.attackedBy
         );
         var cardExist = userAttacker[0].cards.filter(
-            (c) => c == attackerGlobal.card
+            (c) => c === attackerGlobal.card
         );
+
+        emitBlockAttackGlobal(game.idGame)
         
         if(!cardExist[0]) {
+            if(userAttacker[0].cards.length === 1) {
+                emitLostGame(game.idGame, attackerGlobal.attackedBy)
+                dispatch({
+                    type: 'SET_ATTACKER_GLOBAL',
+                    payload: null
+                });
+                return
+            }
             emitLostCard(game.idGame, attackerGlobal.attackedBy)
             dispatch({
                 type: 'SET_ATTACKER_GLOBAL',
@@ -39,10 +50,17 @@ const MessageAttackedGlobal = () => {
             });
         } else {
             //emitLostCard(game.idGame, user.username)
+            // Cambiar carta del bloqueador porque si tiene la carta (solo cambiar la carta no usar la habilidad)
             dispatch({
                 type: 'SET_ATTACKER_GLOBAL',
                 payload: null
             });
+
+            if(game.myUser.cards.length === 1) {
+                emitLostGame(game.idGame, user.username)
+                return
+            }
+
             dispatch({
                 type: 'LOST_CARD',
                 payload: {

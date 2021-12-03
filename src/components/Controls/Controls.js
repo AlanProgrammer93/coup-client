@@ -3,41 +3,80 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import data from '../../cards.json';
 import { emitAllow, emitBlockCard, emitLostCard, emitLostGame, emitTakeMoney, emitUseCard, emitUseCardGlobal } from '../../utils/socket';
+import MessageActions from '../MessageActions/MessageActions';
 import Message from '../MessageFeedback/Message';
 import SelectOponent from '../SelectOponent/SelectOponent';
 
 import './Controls.css'
 
 const Controls = () => {
-    const { user, game, attacker } = useSelector((state) => ({ ...state }));
+    const { user, game, attacker, action } = useSelector((state) => ({ ...state }));
     const dispatch = useDispatch()
 
     const [showMenu, setShowMenu] = useState(false)
     const [error, setError] = useState('')
-    const [selectOponent, setSelectOponent] = useState(false)
     const [cardSelected, setCardSelected] = useState('')
 
     const takeMoney = () => {
-        if(game.turn !== user.username) {
+        if(game.turn !== user.username || game.state === 'initial') {
             setError('No es tu turno')
             return
         }
         emitTakeMoney(game.idGame, user.username)
+        setCardSelected('')
     }
 
     const playCard = (card) => {
+        if(game.state === 'initial') {
+            setError('No es tu turno')
+            return
+        }
         if (game.gamer.length === 1) {
             switch (card) {
                 case 'capitan':
+                    game.turn = 'next'
                     emitUseCard('capitan', game.idGame, game.gamer[0].user, user.username)
+                    dispatch({
+                        type: 'SET_ACTION',
+                        payload: {
+                            msg: `Atacaste a ${game.gamer[0].user} con el Capitan`
+                        }
+                    });
                     break;
             
                 case 'asesina':
                     if(game.myUser.money.length > 2){
+                        game.turn = 'next'
                         emitUseCard('asesina', game.idGame, game.gamer[0].user, user.username)
+                        dispatch({
+                            type: 'SET_ACTION',
+                            payload: {
+                                msg: `Atacaste a ${game.gamer[0].user} con la Asesina`
+                            }
+                        });
                         return
                     }
-                    console.log("no puedes usar, faltan monedas");
+                    setError('No tienes suficiente monedas.')
+                    break;
+                    
+                case 'coup':
+                    if (game.myUser.money.length > 6) {
+                        game.turn = 'next'
+                        if(game.gamer[0].cards.length === 1) {
+                            emitLostGame(game.idGame, game.gamer[0].user)
+                            return
+                        }
+                        emitUseCard('coup', game.idGame, game.gamer[0].user, user.username)
+                        dispatch({
+                            type: 'SET_ACTION',
+                            payload: {
+                                msg: `Atacaste a ${game.gamer[0].user} con COUP`
+                            }
+                        });
+                        return
+                    } else {
+                        setError('No tienes suficiente monedas.')
+                    }
                     break;
 
                 default:
@@ -45,18 +84,35 @@ const Controls = () => {
             }
         } else {
             setCardSelected(card)
-            setSelectOponent(true)
         }
     }
 
     const playCardGlobal = (card) => {
+        if(game.state === 'initial') {
+            setError('No es tu turno')
+            return
+        }
         switch (card) {
             case 'embajador':
+                game.turn = 'next'
                 emitUseCardGlobal('embajador', game.idGame, user.username)
+                dispatch({
+                    type: 'SET_ACTION',
+                    payload: {
+                        msg: 'Usaste el Embajador'
+                    }
+                });
                 break;
 
             case 'duque':
+                game.turn = 'next'
                 emitUseCardGlobal('duque', game.idGame, user.username)
+                dispatch({
+                    type: 'SET_ACTION',
+                    payload: {
+                        msg: 'Usaste el Duque'
+                    }
+                });
                 break;
 
             default:
@@ -65,33 +121,17 @@ const Controls = () => {
     }
 
     const blockCard = (card) => {
-        switch (card) {
-            case 'capitan':
-                emitBlockCard('capitan', game.idGame, attacker.attackedBy, user.username)
-                dispatch({
-                    type: 'SET_ATTACKER',
-                    payload: null
-                });
-                break;
-        
-            case 'embajador':
-                emitBlockCard('embajador', game.idGame, attacker.attackedBy, user.username)
-                dispatch({
-                    type: 'SET_ATTACKER',
-                    payload: null
-                });
-                break;
-            case 'condesa':
-                emitBlockCard('condesa', game.idGame, attacker.attackedBy, user.username)
-                dispatch({
-                    type: 'SET_ATTACKER',
-                    payload: null
-                });
-                break;
-
-            default:
-                break;
-        }
+        emitBlockCard(card, game.idGame, attacker.attackedBy, user.username)
+        dispatch({
+            type: 'SET_ATTACKER',
+            payload: null
+        });
+        dispatch({
+            type: 'SET_ACTION',
+            payload: {
+                msg: `Bloqueaste a ${attacker.attackedBy} con ${card}`
+            }
+        });
     }
 
     const allow = () => {
@@ -100,6 +140,11 @@ const Controls = () => {
                 type: 'SET_ATTACKER',
                 payload: null
             });
+
+            if(game.myUser.cards.length === 1) {
+                emitLostGame(game.idGame, user.username)
+                return
+            }
 
             dispatch({
                 type: 'LOST_CARD',
@@ -119,29 +164,45 @@ const Controls = () => {
 
     const distrust = () => {
         var userAttacker = game.gamer.filter(
-            (u) => u.user == attacker.attackedBy
+            (u) => u.user === attacker.attackedBy
         );
         var cardExist = userAttacker[0].cards.filter(
-            (c) => c == attacker.card
+            (c) => c === attacker.card
         );
         
         if(!cardExist[0]) {
-            if(attacker.card === 'asesina') {
-                console.log("NO TIENE LA asesina Y PIERDE EL JUEGO");
+            if (userAttacker[0].cards.length === 1) {
                 emitLostGame(game.idGame, attacker.attackedBy)
                 dispatch({
                     type: 'SET_ATTACKER',
                     payload: null
                 });
                 return
-            }
+            } 
             emitLostCard(game.idGame, attacker.attackedBy)
             dispatch({
                 type: 'SET_ATTACKER',
                 payload: null
             });
         } else {
-            //emitLostCard(game.idGame, user.username)
+            if(game.myUser.cards.length === 1) {
+                emitLostGame(game.idGame, user.username)
+                dispatch({
+                    type: 'SET_ATTACKER',
+                    payload: null
+                });
+                return
+            }
+
+            if(attacker.card === 'asesina') {
+                emitLostGame(game.idGame, user.username)
+                dispatch({
+                    type: 'SET_ATTACKER',
+                    payload: null
+                });
+                return
+            }
+
             dispatch({
                 type: 'SET_ATTACKER',
                 payload: null
@@ -157,8 +218,18 @@ const Controls = () => {
 
     return (
         <>
-            {selectOponent && <SelectOponent gamers={game.gamer} />}
+            {
+                cardSelected && 
+                <SelectOponent 
+                    gamers={game.gamer} 
+                    card={cardSelected} 
+                    setCardSelected ={setCardSelected} 
+                    setError={setError}
+                />
+            }
             {error && <Message msg={error} setError={setError} />}
+            {action && <MessageActions />}
+            {console.log(action)}
             <div className="home__controls">
                 <div className="home__controls-money">
                     {
@@ -169,9 +240,9 @@ const Controls = () => {
                 </div>
                 <div className="home__controls-cards">
                     {
-                        game && game.myUser.cards.map(card => (
-                            <div className="home__controls-card">
-                                <img src={`/cards/${card}.png`} />
+                        game && game.myUser.cards.map((card, index) => (
+                            <div className="home__controls-card" key={index}>
+                                <img src={`/cards/${card}.png`} alt="" />
                                 <div className="detail-card">
                                     <p>{card}</p>
                                     <span>{data[card]}</span>
@@ -194,7 +265,7 @@ const Controls = () => {
                                 <button onClick={() => playCardGlobal('embajador')}>Tengo el Embajador</button>
                                 <button onClick={() => playCardGlobal('duque')}>Tengo el Duque</button>
                                 <button onClick={() => playCard('asesina')}>Tengo la Asesina</button>
-                                <button>COUP</button>
+                                <button onClick={() => playCard('coup')}>COUP</button>
                             </div>
                         ) : (
                             <div className="optionGame">

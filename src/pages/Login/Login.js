@@ -23,7 +23,7 @@ const Login = () => {
         if(token) {
             history('/')
         }
-    }, [])
+    }, [history])
 
     const onChange = (e) => {
         setData(prev => ({ ...prev, [e.target.name]: e.target.value}))

@@ -32,8 +32,8 @@ const DescartOneCard = () => {
             <h2>Descartar Una</h2>
             <div className="descartCard">
             {
-                descart.cards.map(card => (
-                    <button onClick={() => returnSelected(card)}>{card}</button>
+                descart.cards.map((card, index) => (
+                    <button key={index} onClick={() => returnSelected(card)}>{card}</button>
                 ))
             }
             </div>

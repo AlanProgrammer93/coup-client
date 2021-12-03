@@ -19,15 +19,14 @@ const MessageBlocked = () => {
 
     const distrust = () => {
         var userBlocker = game.gamer.filter(
-            (u) => u.user == blocker.blockedBy
+            (u) => u.user === blocker.blockedBy
         );
         var cardExist = userBlocker[0].cards.filter(
-            (c) => c == blocker.card
+            (c) => c === blocker.card
         );
         
         if(!cardExist[0]) {
             if(blocker.card === 'condesa') {
-                console.log("NO TIENE LA CONDESA Y PIERDE EL JUEGO");
                 emitLostGame(game.idGame, blocker.blockedBy)
                 dispatch({
                     type: 'SET_BLOCKER',
@@ -35,6 +34,14 @@ const MessageBlocked = () => {
                 });
                 return
             }
+            if (userBlocker[0].cards.length === 1) {
+                emitLostGame(game.idGame, blocker.blockedBy)
+                dispatch({
+                    type: 'SET_BLOCKER',
+                    payload: null
+                });
+                return
+            } 
             // user DEBE OBTENER OTRA CARTA
             emitLostCard(game.idGame, blocker.blockedBy)
             dispatch({
@@ -44,7 +51,16 @@ const MessageBlocked = () => {
         } else {
             // BLOQUEADOR DEBE OBTENER OTRA CARTA
             // puede ser que la instruccion de abajo no sea nesesario
-            emitLostCard(game.idGame, user.username)
+            //emitLostCard(game.idGame, user.username)
+            
+            if(game.myUser.cards.length === 1) {
+                emitLostGame(game.idGame, user.username)
+                dispatch({
+                    type: 'SET_BLOCKER',
+                    payload: null
+                });
+                return
+            }
             dispatch({
                 type: 'SET_BLOCKER',
                 payload: null

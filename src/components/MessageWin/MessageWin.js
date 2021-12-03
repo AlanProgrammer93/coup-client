@@ -1,13 +1,19 @@
 import React from 'react'
 import { useNavigate } from 'react-router'
+import { useDispatch } from 'react-redux'
 
 import './MessageWin.css'
 
 const MessageWin = () => {
     const history = useNavigate()
+    const dispatch = useDispatch()
 
     const goHome = () => {
         localStorage.removeItem('currentGame')
+        dispatch({
+            type: 'RESULT',
+            payload: null
+        });
         history(`/`)
     }
 

@@ -6,7 +6,7 @@ import { emitStartGame } from '../../utils/socket';
 import './Starting.css'
 
 const Starting = () => {
-    const { game } = useSelector((state) => ({ ...state }));
+    const { user, game } = useSelector((state) => ({ ...state }));
 
     // SEGUIR AQUI: ESTILIZAR CARD, FUNCION COMENZAR JUEGO 
     const startGame = () => {
@@ -15,8 +15,16 @@ const Starting = () => {
 
     return (
         <div className="starting">
-            <h3>2 Jugadores</h3>
-            <button onClick={startGame}>Comenzar Ahora</button>
+            {
+                game.createdBy === user.username ? (
+                    <>
+                    <h3>Son {game.gamer.length + 1} Jugadores en espera</h3>
+                    <button onClick={startGame}>Comenzar Ahora</button>
+                    </>
+                ) : (
+                    <h3>Son {game.gamer.length + 1} Jugadores en espera</h3>
+                )
+            }
         </div>
     )
 }
