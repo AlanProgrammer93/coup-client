@@ -16,6 +16,10 @@ const Start = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(!token) {
+            history('/login')
+        }
         init(dispatch);
         emitGetGames()
         // obtener games

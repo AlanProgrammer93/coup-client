@@ -36,6 +36,10 @@ const Home = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(!token) {
+            history('/login')
+        }
         try {
             getSocket();
             
