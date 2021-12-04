@@ -8,7 +8,6 @@ import './Starting.css'
 const Starting = () => {
     const { user, game } = useSelector((state) => ({ ...state }));
 
-    // SEGUIR AQUI: ESTILIZAR CARD, FUNCION COMENZAR JUEGO 
     const startGame = () => {
         emitStartGame(game.idGame)
     }

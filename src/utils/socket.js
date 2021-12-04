@@ -2,7 +2,7 @@ import socketClient from 'socket.io-client';
 
 let socket;
 
-const SERVER = 'http://192.168.50.115:5000';
+const SERVER = 'https://coup-alan.herokuapp.com';
 
 export const init = (dispatch) => {
     socket = socketClient(SERVER);
@@ -43,7 +43,6 @@ export const init = (dispatch) => {
         });
     });
     socket.on('coup', (data) => {
-        console.log("COUP", data);
         dispatch({
             type: 'SET_COUP',
             payload: data

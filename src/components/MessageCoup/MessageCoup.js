@@ -10,7 +10,6 @@ const MessageCoup = () => {
     const dispatch = useDispatch()
 
     const deleteCard = (card) => {
-        // aqui ver si tiene una carta, si es asi emitir endGame
         emitLostCardSelected(game.idGame, user.username, card)
         dispatch({
             type: 'SET_COUP',

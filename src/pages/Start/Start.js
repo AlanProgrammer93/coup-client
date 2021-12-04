@@ -60,7 +60,6 @@ const Start = () => {
             >
                 Abrir Partida
             </button>
-            {console.log(games)}
             <div className="start__list">
                 {
                     myGame ? (

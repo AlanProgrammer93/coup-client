@@ -75,7 +75,6 @@ const Home = () => {
                     descart && (<DescartOneCard />)
                 }
                 <Main />
-                {console.log(game)}
                 <Controls />
                 {
                     game && game.state === 'initial' && (

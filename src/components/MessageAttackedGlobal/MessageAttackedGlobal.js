@@ -49,7 +49,6 @@ const MessageAttackedGlobal = () => {
                 payload: null
             });
         } else {
-            //emitLostCard(game.idGame, user.username)
             // Cambiar carta del bloqueador porque si tiene la carta (solo cambiar la carta no usar la habilidad)
             dispatch({
                 type: 'SET_ATTACKER_GLOBAL',

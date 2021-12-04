@@ -49,10 +49,6 @@ const MessageBlocked = () => {
                 payload: null
             });
         } else {
-            // BLOQUEADOR DEBE OBTENER OTRA CARTA
-            // puede ser que la instruccion de abajo no sea nesesario
-            //emitLostCard(game.idGame, user.username)
-            
             if(game.myUser.cards.length === 1) {
                 emitLostGame(game.idGame, user.username)
                 dispatch({

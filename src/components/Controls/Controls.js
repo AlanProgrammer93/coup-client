@@ -229,7 +229,6 @@ const Controls = () => {
             }
             {error && <Message msg={error} setError={setError} />}
             {action && <MessageActions />}
-            {console.log(action)}
             <div className="home__controls">
                 <div className="home__controls-money">
                     {

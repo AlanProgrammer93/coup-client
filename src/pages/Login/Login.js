@@ -48,7 +48,7 @@ const Login = () => {
                 });
                 history('/')
             })
-            .catch(err => console.log(err))
+            .catch(err => setError("Ocurrio un problema en el servidor. Intentelo de nuevo."))
     }
 
     const register = (e) => {
@@ -78,14 +78,14 @@ const Login = () => {
                 });
                 history('/')
             })
-            .catch(err => console.log(err))
+            .catch(err => setError("Ya está en uso ese nombre de usuario."))
         
     }
 
     return (
         <div className="login">
             <div className="login__card">
-                <h2>Coop</h2>
+                <h2>Coup</h2>
                 <input 
                     type="text" 
                     placeholder="Nombre de usuario"
