@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import Controls from '../../components/Controls/Controls'
 import DescartOneCard from '../../components/DescartOneCard/DescartOneCard';
@@ -21,6 +21,7 @@ import "./Home.css"
 const Home = () => {
     const param = useParams();
     const idGame = param.idGame;
+    const history = useNavigate()
 
     const { 
         user, 
