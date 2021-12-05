@@ -2,7 +2,7 @@ import socketClient from 'socket.io-client';
 
 let socket;
 
-const SERVER = '';
+const SERVER = 'https://coup-alan.herokuapp.com';
 
 export const init = (dispatch) => {
     socket = socketClient(SERVER);
