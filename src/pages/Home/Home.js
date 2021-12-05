@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import Controls from '../../components/Controls/Controls'
 import DescartOneCard from '../../components/DescartOneCard/DescartOneCard';
+import EndGameOption from '../../components/EndGameOption/EndGameOption';
+import Instructions from '../../components/Instructions/Instructions';
 import Main from '../../components/Main/Main'
 import MessageAttacked from '../../components/MessageAttacked/MessageAttacked';
 import MessageAttackedGlobal from '../../components/MessageAttackedGlobal/MessageAttackedGlobal';
@@ -79,6 +81,8 @@ const Home = () => {
                 {
                     descart && (<DescartOneCard />)
                 }
+                <EndGameOption />
+                <Instructions position={'350px'} />
                 <Main />
                 <Controls />
                 {

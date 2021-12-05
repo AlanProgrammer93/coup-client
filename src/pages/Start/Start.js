@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Instructions from '../../components/Instructions/Instructions'
 
 import { emitDeleteGame, emitGetGames, emitJoinGame, emitOpenGame, init } from '../../utils/socket'
 
@@ -56,7 +57,7 @@ const Start = () => {
 
     return (
         <div className="start">
-
+            <Instructions position={'20px'} />
             <button
                 onClick={openGame}
                 className="openButton"

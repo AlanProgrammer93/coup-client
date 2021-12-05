@@ -5,4 +5,5 @@ body {
 .App {
   box-sizing: border-box;
   background-color: #2b2b2b;
+  letter-spacing: 2px;
 }

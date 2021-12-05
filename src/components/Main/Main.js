@@ -9,6 +9,7 @@ const Main = () => {
     return (
         <>
             <div className="home__main">
+                
                 <div className="home__main-oponent1">
                     {
                         game && game.gamer[0] && game.gamer[0].cards.map((card, index) => (

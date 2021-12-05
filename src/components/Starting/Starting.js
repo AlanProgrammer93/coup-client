@@ -9,7 +9,9 @@ const Starting = () => {
     const { user, game } = useSelector((state) => ({ ...state }));
 
     const startGame = () => {
-        emitStartGame(game.idGame)
+        if(game.gamer.length >= 1) {
+            emitStartGame(game.idGame)
+        }
     }
 
     return (
